@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Iniciar Sesión</h1>
+    <form id="loginForm">
+      <label for="loginUsername">Usuario</label>
+      <input type="text" id="loginUsername" name="loginUsername" required />
+
+      <label for="loginPassword">Contraseña</label>
+      <input type="password" id="loginPassword" name="loginPassword" required />
+
+      <button type="submit">Acceder</button>
+      <p class="error" id="loginError"></p>
+    </form>
+
+    <div class="register-link">
+      <p>¿No tienes cuenta?</p>
+      <a href="register.html">Regístrate aquí</a>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://127.0.0.1:5000';
+
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorMsg = document.getElementById('loginError');
+
+      try {
+        const response = await fetch(`${API_URL}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          // Login exitoso: redirigir a home
+          window.location.href = 'home.html';
+        } else {
+          // Muestra el error que viene del backend (si existe)
+          errorMsg.textContent = data.error || 'Error al iniciar sesión';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        errorMsg.textContent = 'Error de conexión';
+      }
+    });
+  </script>
+</body>
+</html>

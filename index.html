@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login y Registro</title>
+  <style>
+    /* Estilos básicos */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+
+    form {
+      margin-bottom: 30px;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input {
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #mensaje {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bienvenido</h1>
+
+  <!-- Formulario de Login -->
+  <h2>Iniciar Sesión</h2>
+  <form id="loginForm">
+    <label for="loginUsername">Usuario:</label>
+    <input type="text" id="loginUsername" name="loginUsername" required />
+
+    <label for="loginPassword">Contraseña:</label>
+    <input type="password" id="loginPassword" name="loginPassword" required />
+
+    <button type="submit">Iniciar Sesión</button>
+  </form>
+
+  <!-- Formulario de Registro -->
+  <h2>Registrarse</h2>
+  <form id="registerForm">
+    <label for="registerUsername">Usuario:</label>
+    <input type="text" id="registerUsername" name="registerUsername" required />
+
+    <label for="registerPassword">Contraseña:</label>
+    <input type="password" id="registerPassword" name="registerPassword" required />
+
+    <button type="submit">Registrarse</button>
+  </form>
+
+  <div id="mensaje"></div>
+
+  <script>
+    // URL base de tu API Flask (ajústala si es diferente)
+    const API_URL = 'http://127.0.0.1:5000';
+
+    // Manejo del formulario de Login
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const response = await fetch(`${API_URL}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          // Login exitoso
+          document.getElementById('mensaje').innerHTML = data.message;
+          document.getElementById('mensaje').classList.remove('error');
+        } else {
+          // Error en login
+          document.getElementById('mensaje').innerHTML = data.error || 'Error en el login';
+          document.getElementById('mensaje').classList.add('error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('mensaje').innerHTML = 'Error de conexión';
+        document.getElementById('mensaje').classList.add('error');
+      }
+    });
+
+    // Manejo del formulario de Registro
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('registerUsername').value;
+      const password = document.getElementById('registerPassword').value;
+
+      try {
+        const response = await fetch(`${API_URL}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          // Registro exitoso
+          document.getElementById('mensaje').innerHTML = data.message;
+          document.getElementById('mensaje').classList.remove('error');
+        } else {
+          // Error en registro
+          document.getElementById('mensaje').innerHTML = data.error || 'Error en el registro';
+          document.getElementById('mensaje').classList.add('error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('mensaje').innerHTML = 'Error de conexión';
+        document.getElementById('mensaje').classList.add('error');
+      }
+    });
+  </script>
+</body>
+</html>

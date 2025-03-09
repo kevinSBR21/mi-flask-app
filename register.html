@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registrarse</title>
+  <link rel="stylesheet" href="css/register.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Registrarse</h1>
+    <form id="registerForm">
+      <label for="registerUsername">Usuario</label>
+      <input type="text" id="registerUsername" name="registerUsername" required />
+
+      <label for="registerPassword">Contraseña</label>
+      <input type="password" id="registerPassword" name="registerPassword" required />
+
+      <button type="submit">Crear Cuenta</button>
+      <p class="error" id="registerError"></p>
+      <p class="success" id="registerSuccess"></p>
+    </form>
+
+    <div class="login-link">
+      <p>¿Ya tienes cuenta?</p>
+      <a href="login.html">Inicia Sesión</a>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://127.0.0.1:5000';
+
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('registerUsername').value;
+      const password = document.getElementById('registerPassword').value;
+      const errorMsg = document.getElementById('registerError');
+      const successMsg = document.getElementById('registerSuccess');
+
+      // Limpiar mensajes previos
+      errorMsg.textContent = '';
+      successMsg.textContent = '';
+
+      try {
+        const response = await fetch(`${API_URL}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          // Registro exitoso
+          successMsg.textContent = data.message;
+        } else {
+          // Error en registro
+          errorMsg.textContent = data.error || 'Error al registrar';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        errorMsg.textContent = 'Error de conexión';
+      }
+    });
+  </script>
+</body>
+</html>
